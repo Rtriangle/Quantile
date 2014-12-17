@@ -28,9 +28,9 @@ void SiftDown(Iterator Begin, Iterator End, const Comparator &comparator)
 	if((End - Begin) == 0)
 		return;
 	else
-		if(End - Begin == 1)
+		if((End - Begin) == 1)
 		{
-			if(comparator(*MoveElement, *(Begin + (Begin - MoveElement)*2 + 1)))
+			if(comparator(*(Begin + (Begin - MoveElement)*2 + 1), *MoveElement))
 				std::iter_swap(Begin + (Begin - MoveElement)*2 + 1, MoveElement);
 		}
 		else
@@ -38,10 +38,10 @@ void SiftDown(Iterator Begin, Iterator End, const Comparator &comparator)
 			while(true)
 			{
 				Iterator MoveTo = MoveElement;
-				if(comparator(*MoveElement, *(Begin + (Begin - MoveElement)*2+1)))
+				if(comparator(*(Begin + (Begin - MoveElement)*2+1), *MoveElement))
 					MoveTo = Begin + (Begin - MoveElement) * 2 + 1;
 				else
-					if(comparator(*MoveTo, *(Begin + (Begin - MoveElement) * 2 + 2)))
+					if(comparator(*(Begin + (Begin - MoveElement) * 2 + 2), *MoveTo))
 						MoveTo = Begin + (Begin - MoveElement) * 2 + 2;
 					else
 						return;
@@ -55,7 +55,8 @@ template <typename Container>
 void Solution(Container &Input, Container &Heap1, Container &Heap2,
 			  const size_t &N, size_t &Quantile, const double &alpha)
 {
-	std::cout << Input[0] << '\n';
+	int MinimByZero = Input[0]; 
+	std::cout << MinimByZero << '\n';
 	size_t Tmp;
 	for(int i = 1; i < N; ++i)
 	{
@@ -97,35 +98,46 @@ void Solution(Container &Input, Container &Heap1, Container &Heap2,
 				{
 					Heap1.push_back(Heap2[0]);
 					*Heap2.begin() = Input[i];
-					auto En = Heap2.end(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					En--;
-					auto Beg = Heap2.begin();//!!!!!!!!!!!!!!!!!!!!!!!
-					auto comp = std::less<int>();
-//					SiftDown(Heap2.begin(), Heap2.end()-1, std::less<int>());
-					SiftDown(Beg, En, comp);
+//					auto En = Heap2.end(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//					En--;
+//					auto Beg = Heap2.begin();//!!!!!!!!!!!!!!!!!!!!!!!
+//					auto comp = std::less<int>();
+					SiftDown(Heap2.begin(), Heap2.end()-1, std::less<int>());
+//					SiftDown(Beg, En, comp);
 					SiftUp(Heap1.begin(), Heap1.end()-1, std::greater<int>());
 				}	
 			}
 			else
 			{
-				if(*Heap2.begin() < Input[i])
+				if(Heap2.empty())
+				{
+					Heap1.push_back(Input[i]);
+				}
+				if(*Heap2.begin() < Input[i]))
 				{
 					Heap1.push_back(Heap2[0]);
 					*Heap2.begin() = Input[i];
 					if(Heap2.size() != 0)
 					{
-						auto En = Heap2.end(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-						En--;
-						auto Beg = Heap2.begin();//!!!!!!!!!!!!!!!!!!!!!!!
-						auto comp = std::less<int>();
-//						SiftDown(Heap2.begin(), Heap2.end()-1, std::less<int>());
-						SiftDown(Beg, En, comp);
+//						auto En = Heap2.end(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//						En--;
+//						auto Beg = Heap2.begin();//!!!!!!!!!!!!!!!!!!!!!!!
+//						auto comp = std::less<int>();
+						SiftDown(Heap2.begin(), Heap2.end()-1, std::less<int>());
+//						SiftDown(Beg, En, comp);
 					}
 				}
 				else
 					Heap1.push_back(Input[i]);
 			}
 		}
+		if(Heap1.empty())
+		{
+			MinimByZero = std::min(MinimByZero, Input[i]);
+			std::cout << MinimByZero << '\n';
+		}
+		else
+			std::cout << *Heap1.begin() << '\n';
 	}
 }
 
