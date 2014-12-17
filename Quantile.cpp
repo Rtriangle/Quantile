@@ -50,13 +50,13 @@ void SiftDown(Iterator Begin, Iterator End, const Comparator &comparator)
 		}
 }
 
-//Все хорошо, только добавить для Heap1.empty() == true
 template <typename Container>
 void Solution(Container &Input, Container &Heap1, Container &Heap2,
-			  const size_t &N, size_t &Quantile, const double &alpha)
+			  const size_t &N, size_t &Quantile, const double &alpha, Container &Result)
 {
 	int MinimByZero = Input[0]; 
 	std::cout << MinimByZero << '\n';
+//	Result[0] = Input[0];
 	size_t Tmp;
 	for(int i = 1; i < N; ++i)
 	{
@@ -85,6 +85,7 @@ void Solution(Container &Input, Container &Heap1, Container &Heap2,
 				SiftUp(Heap2.begin(), Heap2.end()-1, std::less<int>());
 			}
 		}
+//
 		else
 		{
 			if(!Heap1.empty())
@@ -98,46 +99,34 @@ void Solution(Container &Input, Container &Heap1, Container &Heap2,
 				{
 					Heap1.push_back(Heap2[0]);
 					*Heap2.begin() = Input[i];
-//					auto En = Heap2.end(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//					En--;
-//					auto Beg = Heap2.begin();//!!!!!!!!!!!!!!!!!!!!!!!
-//					auto comp = std::less<int>();
 					SiftDown(Heap2.begin(), Heap2.end()-1, std::less<int>());
-//					SiftDown(Beg, En, comp);
 					SiftUp(Heap1.begin(), Heap1.end()-1, std::greater<int>());
 				}	
 			}
 			else
 			{
 				if(Heap2.empty())
-				{
 					Heap1.push_back(Input[i]);
-				}
-				if(*Heap2.begin() < Input[i]))
-				{
-					Heap1.push_back(Heap2[0]);
-					*Heap2.begin() = Input[i];
-					if(Heap2.size() != 0)
-					{
-//						auto En = Heap2.end(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//						En--;
-//						auto Beg = Heap2.begin();//!!!!!!!!!!!!!!!!!!!!!!!
-//						auto comp = std::less<int>();
-						SiftDown(Heap2.begin(), Heap2.end()-1, std::less<int>());
-//						SiftDown(Beg, En, comp);
-					}
-				}
 				else
-					Heap1.push_back(Input[i]);
+					if(*Heap2.begin() < Input[i])
+					{
+						Heap1.push_back(Heap2[0]);
+						*Heap2.begin() = Input[i];
+						SiftDown(Heap2.begin(), Heap2.end()-1, std::less<int>());
+					}
+					else
+						Heap1.push_back(Input[i]);
 			}
 		}
 		if(Heap1.empty())
 		{
 			MinimByZero = std::min(MinimByZero, Input[i]);
 			std::cout << MinimByZero << '\n';
+//			Result[i] = MinimByZero;
 		}
 		else
 			std::cout << *Heap1.begin() << '\n';
+//			Result[i] = *Heap.begin();
 	}
 }
 
@@ -149,6 +138,7 @@ int main()
 	std::vector <int> Heap1;//Min On Top
 	std::vector <int> Heap2;//Max On Top
 	std::vector <int> Input;
+	std::vector <int> Result;
 	double alpha;
 	size_t N, Quantile = 0;
 	std::cin >> N >> alpha;
@@ -158,6 +148,8 @@ int main()
 		std::cin >> Tmp;
 		Input.push_back(Tmp);
 	}
-	Solution(Input, Heap1, Heap2, N, Quantile, alpha);
+	Solution(Input, Heap1, Heap2, N, Quantile, alpha, Result);
+//	for(auto it = Result.begin(); it != Result.end(); ++it)
+//		std::cout << *it << '\n';
 	return 0;
 }
