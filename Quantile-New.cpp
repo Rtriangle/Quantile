@@ -25,22 +25,24 @@ void SiftDown(Iterator Begin, Iterator End, const Comparator &comparator)
 	else
 		if((End - Begin) == 1)
 		{
-			if(comparator(*(Begin + (Begin - MoveElement)*2 + 1), *MoveElement))
-				std::iter_swap(Begin + (Begin - MoveElement)*2 + 1, MoveElement);
+			if(comparator(*(Begin + (MoveElement - Begin)*2 + 1), *MoveElement))
+				std::swap(*(Begin + (MoveElement - Begin)*2 + 1), *MoveElement);
 		}
 		else
 		{
 			while(true)
 			{
 				Iterator MoveTo = MoveElement;
-				if(comparator(*(Begin + (Begin - MoveElement)*2+1), *MoveElement))
-					MoveTo = Begin + (Begin - MoveElement) * 2 + 1;
-				else
-					if(comparator(*(Begin + (Begin - MoveElement) * 2 + 2), *MoveTo))
-						MoveTo = Begin + (Begin - MoveElement) * 2 + 2;
-					else
-						return;
-				std::iter_swap(MoveTo, MoveElement);
+				if((End - Begin) >= (MoveElement - Begin)*2+1)
+					if(comparator(*(Begin + (MoveElement - Begin)*2+1), *MoveElement))
+						MoveTo = Begin + (MoveElement - Begin) * 2 + 1;
+				if((End - Begin) >= (MoveElement - Begin)*2+2)
+					if(comparator(*(Begin + (MoveElement - Begin) * 2 + 2), *MoveTo))
+						MoveTo = Begin + (MoveElement - Begin) * 2 + 2;
+				if(MoveElement == MoveTo)
+					return;
+				std::swap(*MoveTo, *MoveElement);
+				MoveElement = MoveTo;
 			}
 		}
 }
@@ -52,7 +54,7 @@ void Solution(Container &Input, Container &Heap1, Container &Heap2,
 	Heap1.push_back(Input[0]);
 	Heap2.push_back(Input[0]);
 	std::cout << Input[0] << '\n';
-//	Result[0] = Input[0];
+	Result[0] = Input[0];
 	Quantile = 0;
 	double Tmp;
 	for(int i = 1; i < N; ++i)
@@ -65,7 +67,7 @@ void Solution(Container &Input, Container &Heap1, Container &Heap2,
 			{
 				*(Heap1.begin()) = Input[i];
 				SiftDown(Heap1.begin(), Heap1.end()-1, std::greater<int>());
-				Heap2.push_back(Input[i]);
+				Heap2.push_back(*Heap1.begin());
 				SiftUp(Heap2.begin(), Heap2.end()-1, std::less<int>());
 			}
 			else
@@ -89,6 +91,7 @@ void Solution(Container &Input, Container &Heap1, Container &Heap2,
 				SiftUp(Heap1.begin(), Heap1.end()-1, std::greater<int>());
 			}
 		}
+//		Result[i] = *Heap1.begin();
 		std::cout << *Heap1.begin() << '\n';
 	}
 }
